@@ -11,7 +11,7 @@ on:
         default: ""
 
 permissions:
-  contents: write
+  contents: write   # Release-Upload
 
 jobs:
   build:
@@ -33,7 +33,6 @@ jobs:
           - variant: hub-home-green
             arch: aarch64
             haos_asset: haos_green
-
     steps:
       - uses: actions/checkout@v4
 
@@ -43,7 +42,8 @@ jobs:
           if [ -n "${{ github.event.inputs.haos_version }}" ]; then
             VERSION="${{ github.event.inputs.haos_version }}"
           else
-            VERSION=$(curl -fsSL https://api.github.com/repos/home-assistant/operating-system/releases/latest | jq -r .tag_name)
+            VERSION=$(curl -fsSL https://api.github.com/repos/home-assistant/operating-system/releases/latest \
+              | jq -r .tag_name)
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "url=https://github.com/home-assistant/operating-system/releases/download/${VERSION}/${{ matrix.haos_asset }}-${VERSION}.img.xz" >> "$GITHUB_OUTPUT"
@@ -92,7 +92,6 @@ jobs:
         with:
           path: artifacts
           merge-multiple: true
-
       - name: GitHub Release publizieren
         uses: softprops/action-gh-release@v2
         with:
